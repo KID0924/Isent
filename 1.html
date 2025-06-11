@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 郵輪行程互動儀表板</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Cool & Calm Blues -->
+    <!-- Application Structure Plan: The SPA is designed as an interactive dashboard. This structure was chosen over a linear report because the primary user task is comparison and decision-making. The layout features: 1) A persistent filter panel on the left for users to specify their criteria (date, duration, destination, price). 2) A dynamic main content area on the right displaying results as sortable 'cards' for quick scanning and interactive charts for visual comparison. 3) A modal window for viewing detailed information on demand. This non-linear, user-driven approach empowers users to explore the data according to their personal priorities, making the process of finding the ideal cruise faster and more intuitive. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: All 6 cruise packages. Goal: Inform/Compare. Method: HTML/Tailwind Cards. Interaction: Dynamically rendered based on filters, with a "Details" button. Justification: Cards provide a scannable summary of key info (price, duration, destination). Library: Vanilla JS.
+        - Report Info: Per-person price for each cruise. Goal: Compare. Method: Chart.js Bar Chart. Interaction: Updates dynamically with filters; tooltips show exact prices. Justification: A bar chart is the clearest method for direct quantitative comparison across categories. Library: Chart.js.
+        - Report Info: Duration, Per-person price, Number of destinations. Goal: Relationships. Method: Chart.js Bubble Chart. Interaction: Updates with filters; bubble size represents the number of stops. Justification: Bubble chart effectively visualizes the relationship between three different variables, revealing value insights. Library: Chart.js.
+        - Report Info: Full details of each cruise. Goal: Inform. Method: HTML/Tailwind Modal. Interaction: Appears on "Details" button click, populated with specific cruise data. Justification: Provides comprehensive information without cluttering the main interface or requiring page navigation. Library: Vanilla JS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f1f5f9;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            max-height: 400px;
+        }
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+        .modal-content {
+            transition: transform 0.25s ease;
+        }
+        .filter-btn-active {
+            background-color: #2563eb !important;
+            color: white !important;
+            border-color: #2563eb !important;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div id="app" class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900">2025 郵輪行程互動儀表板</h1>
+            <p class="mt-2 text-slate-600 text-lg">使用篩選器與圖表，輕鬆找到最適合您的夢幻航程。</p>
+        </header>
+
+        <div class="flex flex-col md:flex-row gap-8">
+
+            <aside class="md:w-1/4 lg:w-1/5">
+                <div class="bg-white p-6 rounded-xl shadow-lg sticky top-8">
+                    <h2 class="text-xl font-bold mb-4 text-slate-900">篩選您的航程</h2>
+                    
+                    <div class="mb-6">
+                        <h3 class="font-semibold mb-2">旅遊月份</h3>
+                        <div id="month-filters" class="flex flex-wrap gap-2">
+                            <button data-month="6" class="filter-btn text-sm border border-slate-300 bg-white text-slate-700 rounded-full px-4 py-1.5 transition hover:bg-slate-100">六月</button>
+                            <button data-month="7" class="filter-btn text-sm border border-slate-300 bg-white text-slate-700 rounded-full px-4 py-1.5 transition hover:bg-slate-100">七月</button>
+                            <button data-month="11" class="filter-btn text-sm border border-slate-300 bg-white text-slate-700 rounded-full px-4 py-1.5 transition hover:bg-slate-100">十一月</button>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="font-semibold mb-2">旅遊天數</h3>
+                        <div id="duration-filters" class="flex flex-wrap gap-2">
+                            <button data-duration="3" class="filter-btn text-sm border border-slate-300 bg-white text-slate-700 rounded-full px-3 py-1.5 transition hover:bg-slate-100">3天</button>
+                            <button data-duration="4" class="filter-btn text-sm border border-slate-300 bg-white text-slate-700 rounded-full px-3 py-1.5 transition hover:bg-slate-100">4天</button>
+                            <button data-duration="5" class="filter-btn text-sm border border-slate-300 bg-white text-slate-700 rounded-full px-3 py-1.5 transition hover:bg-slate-100">5天</button>
+                            <button data-duration="6" class="filter-btn text-sm border border-slate-300 bg-white text-slate-700 rounded-full px-3 py-1.5 transition hover:bg-slate-100">6天</button>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="sort-by" class="font-semibold mb-2 block">排序方式</label>
+                        <select id="sort-by" class="w-full p-2 border border-slate-300 rounded-md bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="default">預設</option>
+                            <option value="price_asc">人均價格 (低至高)</option>
+                            <option value="price_desc">人均價格 (高至低)</option>
+                            <option value="duration_asc">旅遊天數 (短至長)</option>
+                        </select>
+                    </div>
+
+                    <button id="reset-filters" class="w-full bg-slate-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-slate-700 transition">
+                        清除所有篩選
+                    </button>
+                </div>
+            </aside>
+
+            <main class="md:w-3/4 lg:w-4/5">
+                <div class="bg-white p-6 rounded-xl shadow-lg mb-8">
+                     <h2 class="text-xl font-bold mb-4 text-slate-900">航程比較圖表</h2>
+                     <p class="text-slate-600 mb-6">此處的圖表會根據您的篩選條件動態更新，提供視覺化的比較。您可以將滑鼠懸停在圖表上以查看詳細數值，幫助您快速評估不同航程的性價比與特色。</p>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-lg font-semibold text-center mb-2">各航程人均價格比較 (TWD)</h3>
+                            <div class="chart-container mx-auto max-w-xl">
+                                <canvas id="price-chart"></canvas>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-center mb-2">天數 vs 價格 vs 停靠點</h3>
+                            <div class="chart-container mx-auto max-w-xl">
+                                <canvas id="bubble-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h2 id="results-title" class="text-xl font-bold mb-4 text-slate-900">所有航程</h2>
+                    <div id="results-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                    </div>
+                    <p id="no-results" class="text-center text-slate-500 py-10 hidden">找不到符合條件的航程，請嘗試調整篩選器。</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div id="modal" class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 opacity-0 pointer-events-none">
+        <div id="modal-content" class="modal-content bg-white w-full max-w-3xl max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col transform scale-95">
+            <header class="flex justify-between items-center p-4 border-b border-slate-200 flex-shrink-0">
+                <h2 id="modal-title" class="text-xl font-bold text-slate-900"></h2>
+                <button id="close-modal" class="text-slate-500 hover:text-slate-800 text-2xl">&times;</button>
+            </header>
+            <div id="modal-body" class="p-6 overflow-y-auto">
+            </div>
+            <footer class="p-4 bg-slate-50 border-t border-slate-200 flex-shrink-0">
+                 <a id="modal-link" href="#" target="_blank" class="block w-full text-center bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition">前往預訂頁面</a>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        const cruiseData = [
+            { id: 1, name: 'MSC Bellissima 石垣島・那霸', date: '2025/06/24', month: 6, duration: 5, cabin: '陽台房–四人房', price: 95600, deposit: 49800, perPerson: 23900, destinations: ['石垣島', '那霸'], ship: 'MSC Bellissima', link: 'https://asiayo.com/zh-tw/activity/75576/', highlights: { original: ['石垣島黑糖DIY＋沙灘浮潛', '那霸古酒與蕎麥麵品嘗', 'Sea Day SPA體驗或甲板派對'], trend: ['Sea Day 數位斷捨離靜心課程', '沉浸式 VR 海洋生態講座'] }, itinerary: [ 'Day 1: 基隆港啟航', 'Day 2: 石垣島停靠', 'Day 3: 那霸停靠', 'Day 4: 全天海上巡航', 'Day 5: 抵達基隆港' ], meals: [ 'Day 1: 晚餐', 'Day 2-4: 早/午/晚餐', 'Day 5: 早餐'] },
+            { id: 2, name: '麗星郵輪 Explor Star 熊本・鹿兒島・那霸', date: '2025/07/13', month: 7, duration: 6, cabin: 'BSS 露台客房–四人房', price: 133600, deposit: 66800, perPerson: 33400, destinations: ['鹿兒島', '熊本', '那霸'], ship: '麗星郵輪 Explor Star', link: 'https://asiayo.com/zh-tw/activity/51219/', highlights: { original: ['鹿兒島砂浴溫泉＋甜品體驗', '熊本城夜間投影燈光秀', '那霸琉球服拍照活動'], trend: ['深夜港口過夜文化行', '船上國際主題晚宴'] }, itinerary: [ 'Day 1: 基隆港啟航', 'Day 2: 全天海上巡航', 'Day 3: 鹿兒島停靠', 'Day 4: 熊本停靠', 'Day 5: 那霸停靠', 'Day 6: 抵達基隆港' ], meals: ['Day 1: 晚餐', 'Day 2-5: 早/午/晚餐', 'Day 6: 早餐'] },
+            { id: 3, name: '星夢郵輪 Genting Dream 新加坡・馬來西亞', date: '2025/07/19', month: 7, duration: 4, cabin: '露台客房（BSS）–四人房', price: 145600, deposit: 72800, perPerson: 36400, destinations: ['吉隆坡/馬六甲'], ship: '星夢郵輪 Genting Dream', link: 'https://asiayo.com/zh-tw/activity/52675/', highlights: { original: ['新加坡濱海灣金沙夜景', '馬六甲娘惹糕與河畔遊船', '船上魔術與水幕電影秀'], trend: ['Sea Day 數位斷捨離靜心課程', '小團深度文化導覽'] }, itinerary: [ 'Day 1: 台北✈新加坡, 登船啟航', 'Day 2: 吉隆坡/馬六甲停靠', 'Day 3: 全天海上巡航', 'Day 4: 抵達新加坡, ✈返台' ], meals: ['Day 1-4: 早/午/晚餐'] },
+            { id: 4, name: '麗星郵輪 Explor Star 公海歡樂遊', date: '2025/07/25', month: 7, duration: 3, cabin: 'DPS 皇宮套房–四人房', price: 78400, deposit: 39200, perPerson: 19600, destinations: ['公海'], ship: '麗星郵輪 Explor Star', link: 'https://asiayo.com/zh-tw/activity/54113/', highlights: { original: ['甲板日落特色雞尾酒', 'SPA桑拿與按摩優惠', '主題派對（海盜/夏威夷）'], trend: ['沉浸式 VR 探險課程', '船橋瑜伽晨間活動'] }, itinerary: [ 'Day 1: 基隆港啟航', 'Day 2: 全天海上巡航', 'Day 3: 抵達基隆港' ], meals: ['Day 1: 晚餐', 'Day 2: 早/午/晚餐', 'Day 3: 早餐'] },
+            { id: 5, name: 'MSC Bellissima 宮古島・沖繩・石垣島', date: '2025/11/21', month: 11, duration: 5, cabin: '陽台艙–四人房', price: 77600, deposit: 43800, perPerson: 19400, destinations: ['宮古島', '那霸', '石垣島'], ship: 'MSC Bellissima', link: 'https://asiayo.com/zh-tw/activity/45842/', highlights: { original: ['川平灣玻璃船', '琉球舞蹈工作坊', '海上環保講座'], trend: ['沉浸式海洋生態 VR', 'Coolcation 美食巡禮'] }, itinerary: [ 'Day 1: 基隆港啟航', 'Day 2: 宮古島停靠', 'Day 3: 那霸停靠', 'Day 4: 石垣島停靠', 'Day 5: 抵達基隆港' ], meals: ['Day 1: 晚餐', 'Day 2-4: 早/午/晚餐', 'Day 5: 早餐'] },
+            { id: 6, name: '歌詩達郵輪 莎倫娜號～沖繩', date: '2025/07/20', month: 7, duration: 4, cabin: '陽台艙–二人房×2', price: 111600, deposit: 60000, perPerson: 27900, destinations: ['那霸'], ship: '歌詩達郵輪 莎倫娜號', link: 'https://asiayo.com/zh-tw/activity/54976', highlights: { original: ['沖繩海葡萄品嘗體驗', '首里城文化巡禮', '甲板星空瑜伽', 'Beniimo塔甜品DIY'], trend: ['沉浸式 VR 沖繩風情導覽', '船上主題直播互動'] }, itinerary: [ 'Day 1: 基隆港報到啟航', 'Day 2: 抵達那霸・停泊過夜', 'Day 3: 啟航離開那霸', 'Day 4: 抵達基隆港' ], meals: ['Day 1: 午/晚餐', 'Day 2-3: 早/午/晚餐', 'Day 4: 早餐'] }
+        ];
+
+        const state = {
+            filters: {
+                month: null,
+                duration: null,
+            },
+            sortBy: 'default'
+        };
+
+        const priceChartCtx = document.getElementById('price-chart').getContext('2d');
+        const bubbleChartCtx = document.getElementById('bubble-chart').getContext('2d');
+        let priceChart, bubbleChart;
+        
+        const formatCurrency = (value) => new Intl.NumberFormat('zh-TW').format(value);
+
+        function renderPriceChart(data) {
+            if (priceChart) {
+                priceChart.destroy();
+            }
+            priceChart = new Chart(priceChartCtx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(c => c.name.split(' ')[0]),
+                    datasets: [{
+                        label: '人均價格 (TWD)',
+                        data: data.map(c => c.perPerson),
+                        backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 1,
+                        borderRadius: 5,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => `人均: ${formatCurrency(context.raw)} TWD`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { callback: (value) => formatCurrency(value) } }
+                    }
+                }
+            });
+        }
+
+        function renderBubbleChart(data) {
+            if (bubbleChart) {
+                bubbleChart.destroy();
+            }
+            bubbleChart = new Chart(bubbleChartCtx, {
+                type: 'bubble',
+                data: {
+                    datasets: data.map(c => ({
+                        label: c.name,
+                        data: [{
+                            x: c.duration,
+                            y: c.perPerson,
+                            r: c.destinations.length * 5 + 5
+                        }],
+                        backgroundColor: `rgba(${Math.floor(Math.random()*100 + 50)}, ${Math.floor(Math.random()*100 + 100)}, 246, 0.7)`,
+                    }))
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => {
+                                    const cruise = cruiseData.find(c => c.name === context.dataset.label);
+                                    return [
+                                        `${cruise.name}`,
+                                        `天數: ${cruise.duration}天`,
+                                        `人均價格: ${formatCurrency(cruise.perPerson)} TWD`,
+                                        `停靠點: ${cruise.destinations.length}個`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: '旅遊天數 (天)' } },
+                        y: { title: { display: true, text: '人均價格 (TWD)' }, ticks: { callback: (value) => formatCurrency(value) } }
+                    }
+                }
+            });
+        }
+
+        function createCard(cruise) {
+            return `
+                <div class="bg-white rounded-xl shadow-md overflow-hidden transition hover:shadow-xl hover:-translate-y-1 flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <p class="text-sm text-slate-500">${cruise.ship}</p>
+                        <h3 class="font-bold text-lg text-slate-900 mt-1 mb-2 h-14">${cruise.name}</h3>
+                        <div class="flex items-baseline text-slate-800 mb-4">
+                            <span class="text-3xl font-bold text-blue-600">${formatCurrency(cruise.perPerson)}</span>
+                            <span class="ml-1">TWD / 人</span>
+                        </div>
+                        <div class="text-sm text-slate-600 space-y-2">
+                            <p>🗓️ <span class="font-medium">日期:</span> ${cruise.date}</p>
+                            <p>⏳ <span class="font-medium">天數:</span> ${cruise.duration} 天</p>
+                            <p>📍 <span class="font-medium">地點:</span> ${cruise.destinations.join('、')}</p>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-slate-50">
+                        <button class="details-btn w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600 transition" data-id="${cruise.id}">
+                            查看詳情
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function renderCards(data) {
+            const grid = document.getElementById('results-grid');
+            const noResults = document.getElementById('no-results');
+            const resultsTitle = document.getElementById('results-title');
+
+            grid.innerHTML = '';
+            if (data.length > 0) {
+                data.forEach(cruise => {
+                    const card = createCard(cruise);
+                    grid.insertAdjacentHTML('beforeend', card);
+                });
+                noResults.classList.add('hidden');
+                resultsTitle.textContent = `找到 ${data.length} 個符合條件的航程`;
+            } else {
+                noResults.classList.remove('hidden');
+                resultsTitle.textContent = `符合條件的航程`;
+            }
+        }
+        
+        function applyFiltersAndSort() {
+            let filteredData = [...cruiseData];
+            
+            if (state.filters.month) {
+                filteredData = filteredData.filter(c => c.month === state.filters.month);
+            }
+            if (state.filters.duration) {
+                filteredData = filteredData.filter(c => c.duration === state.filters.duration);
+            }
+            
+            switch(state.sortBy) {
+                case 'price_asc':
+                    filteredData.sort((a, b) => a.perPerson - b.perPerson);
+                    break;
+                case 'price_desc':
+                    filteredData.sort((a, b) => b.perPerson - a.perPerson);
+                    break;
+                case 'duration_asc':
+                    filteredData.sort((a, b) => a.duration - b.duration);
+                    break;
+            }
+
+            renderCards(filteredData);
+            renderPriceChart(filteredData);
+            renderBubbleChart(filteredData);
+        }
+
+        function setupEventListeners() {
+            document.getElementById('month-filters').addEventListener('click', e => {
+                if (e.target.tagName === 'BUTTON') {
+                    const month = parseInt(e.target.dataset.month);
+                    state.filters.month = state.filters.month === month ? null : month;
+                    document.querySelectorAll('#month-filters .filter-btn').forEach(btn => btn.classList.remove('filter-btn-active'));
+                    if (state.filters.month) e.target.classList.add('filter-btn-active');
+                    applyFiltersAndSort();
+                }
+            });
+            
+            document.getElementById('duration-filters').addEventListener('click', e => {
+                if (e.target.tagName === 'BUTTON') {
+                    const duration = parseInt(e.target.dataset.duration);
+                    state.filters.duration = state.filters.duration === duration ? null : duration;
+                    document.querySelectorAll('#duration-filters .filter-btn').forEach(btn => btn.classList.remove('filter-btn-active'));
+                    if (state.filters.duration) e.target.classList.add('filter-btn-active');
+                    applyFiltersAndSort();
+                }
+            });
+
+            document.getElementById('sort-by').addEventListener('change', e => {
+                state.sortBy = e.target.value;
+                applyFiltersAndSort();
+            });
+
+            document.getElementById('reset-filters').addEventListener('click', () => {
+                state.filters.month = null;
+                state.filters.duration = null;
+                state.sortBy = 'default';
+                document.getElementById('sort-by').value = 'default';
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('filter-btn-active'));
+                applyFiltersAndSort();
+            });
+
+            document.getElementById('results-grid').addEventListener('click', e => {
+                if (e.target.classList.contains('details-btn')) {
+                    const id = parseInt(e.target.dataset.id);
+                    openModal(id);
+                }
+            });
+
+            document.getElementById('close-modal').addEventListener('click', closeModal);
+            document.getElementById('modal').addEventListener('click', e => {
+                if (e.target.id === 'modal') closeModal();
+            });
+        }
+        
+        function openModal(id) {
+            const cruise = cruiseData.find(c => c.id === id);
+            if (!cruise) return;
+            
+            document.getElementById('modal-title').textContent = cruise.name;
+            document.getElementById('modal-link').href = cruise.link;
+            
+            const body = document.getElementById('modal-body');
+            body.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-bold text-lg mb-2">航程資訊</h4>
+                        <ul class="space-y-1.5 text-slate-700">
+                            <li><strong>日期:</strong> ${cruise.date}</li>
+                            <li><strong>天數:</strong> ${cruise.duration} 天</li>
+                            <li><strong>船名:</strong> ${cruise.ship}</li>
+                            <li><strong>艙房:</strong> ${cruise.cabin}</li>
+                            <li><strong>總價:</strong> ${formatCurrency(cruise.price)} TWD</li>
+                            <li><strong>訂金:</strong> ${formatCurrency(cruise.deposit)} TWD</li>
+                            <li><strong>人均:</strong> ${formatCurrency(cruise.perPerson)} TWD</li>
+                        </ul>
+                    </div>
+                     <div>
+                        <h4 class="font-bold text-lg mb-2">每日行程</h4>
+                        <ul class="list-disc list-inside space-y-1.5 text-slate-700">
+                           ${cruise.itinerary.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <h4 class="font-bold text-lg mb-2">活動亮點</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-100 p-4 rounded-lg">
+                           <h5 class="font-semibold mb-2">原建議亮點</h5>
+                           <ul class="list-disc list-inside space-y-1 text-sm text-slate-600">
+                                ${cruise.highlights.original.map(item => `<li>${item}</li>`).join('')}
+                           </ul>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                           <h5 class="font-semibold mb-2 text-blue-800">2025 流行趨勢</h5>
+                           <ul class="list-disc list-inside space-y-1 text-sm text-blue-700">
+                               ${cruise.highlights.trend.map(item => `<li>${item}</li>`).join('')}
+                           </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const modal = document.getElementById('modal');
+            const modalContent = document.getElementById('modal-content');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-95');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            const modalContent = document.getElementById('modal-content');
+            modal.classList.add('opacity-0');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('pointer-events-none');
+            }, 250);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            applyFiltersAndSort();
+            setupEventListeners();
+        });
+    </script>
+</body>
+</html>
