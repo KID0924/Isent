@@ -126,6 +126,18 @@
             { id: 6, name: '歌詩達郵輪 莎倫娜號～沖繩', date: '2025/07/20', month: 7, duration: 4, cabin: '陽台艙–二人房×2', price: 111600, deposit: 60000, perPerson: 27900, destinations: ['那霸'], ship: '歌詩達郵輪 莎倫娜號', link: 'https://asiayo.com/zh-tw/activity/54976', highlights: { original: ['沖繩海葡萄品嘗體驗', '首里城文化巡禮', '甲板星空瑜伽', 'Beniimo塔甜品DIY'], trend: ['沉浸式 VR 沖繩風情導覽', '船上主題直播互動'] }, itinerary: [ 'Day 1: 基隆港報到啟航', 'Day 2: 抵達那霸・停泊過夜', 'Day 3: 啟航離開那霸', 'Day 4: 抵達基隆港' ], meals: ['Day 1: 午/晚餐', 'Day 2-3: 早/午/晚餐', 'Day 4: 早餐'] }
         ];
 
+        // Pre-process data to add departure port
+        cruiseData.forEach(cruise => {
+            const firstDayItinerary = cruise.itinerary[0];
+            if (firstDayItinerary.includes('基隆港')) {
+                cruise.departurePort = '基隆港';
+            } else if (firstDayItinerary.includes('台北✈新加坡')) {
+                cruise.departurePort = '台北 (飛機)';
+            } else {
+                cruise.departurePort = 'N/A'; // Fallback
+            }
+        });
+
         const state = {
             sortBy: 'default'
         };
@@ -135,6 +147,21 @@
         let priceChart, bubbleChart;
         
         const formatCurrency = (value) => new Intl.NumberFormat('zh-TW').format(value);
+
+        // Helper function to format date range with weekdays
+        function formatCruiseDate(startDateStr, duration) {
+            const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+            const startDate = new Date(startDateStr);
+            const endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + duration - 1);
+
+            const startDay = weekdays[startDate.getDay()];
+            const endDay = weekdays[endDate.getDay()];
+
+            const formatDate = (date) => `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
+
+            return `${formatDate(startDate)} (${startDay}) - ${formatDate(endDate)} (${endDay})`;
+        }
 
         function renderPriceChart(data) {
             if (priceChart) {
@@ -216,6 +243,7 @@
         }
 
         function createCard(cruise) {
+            const formattedDate = formatCruiseDate(cruise.date, cruise.duration);
             return `
                 <div class="bg-white rounded-xl shadow-md overflow-hidden transition hover:shadow-xl hover:-translate-y-1 flex flex-col">
                     <div class="p-6 flex-grow">
@@ -226,7 +254,8 @@
                             <span class="ml-1">TWD / 人</span>
                         </div>
                         <div class="text-sm text-slate-600 space-y-2">
-                            <p>🗓️ <span class="font-medium">日期:</span> ${cruise.date}</p>
+                            <p>🗓️ <span class="font-medium">期間:</span> ${formattedDate}</p>
+                            <p>⚓ <span class="font-medium">出發港:</span> ${cruise.departurePort}</p>
                             <p>⏳ <span class="font-medium">天數:</span> ${cruise.duration} 天</p>
                             <p>📍 <span class="font-medium">地點:</span> ${cruise.destinations.join('、')}</p>
                         </div>
@@ -304,7 +333,8 @@
                     <div>
                         <h4 class="font-bold text-lg mb-2">航程資訊</h4>
                         <ul class="space-y-1.5 text-slate-700">
-                            <li><strong>日期:</strong> ${cruise.date}</li>
+                            <li><strong>期間:</strong> ${formatCruiseDate(cruise.date, cruise.duration)}</li>
+                            <li><strong>出發港:</strong> ${cruise.departurePort}</li>
                             <li><strong>天數:</strong> ${cruise.duration} 天</li>
                             <li><strong>船名:</strong> ${cruise.ship}</li>
                             <li><strong>艙房:</strong> ${cruise.cabin}</li>
