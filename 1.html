@@ -35,11 +35,6 @@
         .modal-content {
             transition: transform 0.25s ease;
         }
-        .filter-btn-active {
-            background-color: #2563eb !important;
-            color: white !important;
-            border-color: #2563eb !important;
-        }
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -61,78 +56,50 @@
 
         <header class="text-center mb-8">
             <h1 class="text-3xl md:text-4xl font-bold text-slate-900">2025 郵輪行程互動儀表板</h1>
-            <p class="mt-2 text-slate-600 text-lg">使用篩選器與圖表，輕鬆找到最適合您的夢幻航程。</p>
+            <p class="mt-2 text-slate-600 text-lg">輕鬆比較所有航程，找到最適合您的夢幻之旅。</p>
         </header>
 
-        <div class="flex flex-col md:flex-row gap-8">
-
-            <aside class="md:w-1/4 lg:w-1/5">
-                <div class="bg-white p-6 rounded-xl shadow-lg sticky top-8">
-                    <h2 class="text-xl font-bold mb-4 text-slate-900">篩選您的航程</h2>
-                    
-                    <div class="mb-6">
-                        <h3 class="font-semibold mb-2">旅遊月份</h3>
-                        <div id="month-filters" class="flex flex-wrap gap-2">
-                            <button data-month="6" class="filter-btn text-sm border border-slate-300 bg-white text-slate-700 rounded-full px-4 py-1.5 transition hover:bg-slate-100">六月</button>
-                            <button data-month="7" class="filter-btn text-sm border border-slate-300 bg-white text-slate-700 rounded-full px-4 py-1.5 transition hover:bg-slate-100">七月</button>
-                            <button data-month="11" class="filter-btn text-sm border border-slate-300 bg-white text-slate-700 rounded-full px-4 py-1.5 transition hover:bg-slate-100">十一月</button>
-                        </div>
-                    </div>
-
-                    <div class="mb-6">
-                        <h3 class="font-semibold mb-2">旅遊天數</h3>
-                        <div id="duration-filters" class="flex flex-wrap gap-2">
-                            <button data-duration="3" class="filter-btn text-sm border border-slate-300 bg-white text-slate-700 rounded-full px-3 py-1.5 transition hover:bg-slate-100">3天</button>
-                            <button data-duration="4" class="filter-btn text-sm border border-slate-300 bg-white text-slate-700 rounded-full px-3 py-1.5 transition hover:bg-slate-100">4天</button>
-                            <button data-duration="5" class="filter-btn text-sm border border-slate-300 bg-white text-slate-700 rounded-full px-3 py-1.5 transition hover:bg-slate-100">5天</button>
-                            <button data-duration="6" class="filter-btn text-sm border border-slate-300 bg-white text-slate-700 rounded-full px-3 py-1.5 transition hover:bg-slate-100">6天</button>
-                        </div>
-                    </div>
-
-                    <div class="mb-6">
-                        <label for="sort-by" class="font-semibold mb-2 block">排序方式</label>
-                        <select id="sort-by" class="w-full p-2 border border-slate-300 rounded-md bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="default">預設</option>
+        <main class="w-full">
+            
+            <div>
+                <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                    <h2 id="results-title" class="text-xl font-bold text-slate-900">所有航程</h2>
+                    <div class="w-full md:w-auto md:min-w-[250px]">
+                        <label for="sort-by" class="sr-only">排序方式</label>
+                        <select id="sort-by" class="w-full p-2.5 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                            <option value="default">預設排序</option>
                             <option value="price_asc">人均價格 (低至高)</option>
                             <option value="price_desc">人均價格 (高至低)</option>
                             <option value="duration_asc">旅遊天數 (短至長)</option>
                         </select>
                     </div>
-
-                    <button id="reset-filters" class="w-full bg-slate-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-slate-700 transition">
-                        清除所有篩選
-                    </button>
                 </div>
-            </aside>
 
-            <main class="md:w-3/4 lg:w-4/5">
-                <div class="bg-white p-6 rounded-xl shadow-lg mb-8">
-                     <h2 class="text-xl font-bold mb-4 text-slate-900">航程比較圖表</h2>
-                     <p class="text-slate-600 mb-6">此處的圖表會根據您的篩選條件動態更新，提供視覺化的比較。您可以將滑鼠懸停在圖表上以查看詳細數值，幫助您快速評估不同航程的性價比與特色。</p>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <div>
-                            <h3 class="text-lg font-semibold text-center mb-2">各航程人均價格比較 (TWD)</h3>
-                            <div class="chart-container mx-auto max-w-xl">
-                                <canvas id="price-chart"></canvas>
-                            </div>
+                <div id="results-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <!-- Cruise cards will be rendered here -->
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-lg mt-12">
+                 <h2 class="text-xl font-bold mb-4 text-slate-900 text-center">航程比較圖表</h2>
+                 <p class="text-slate-600 mb-8 text-center max-w-3xl mx-auto">您可以將滑鼠懸停在圖表上以查看詳細數值，幫助您快速評估不同航程的性價比與特色。</p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-lg font-semibold text-center mb-2">各航程人均價格比較 (TWD)</h3>
+                        <div class="chart-container mx-auto max-w-xl">
+                            <canvas id="price-chart"></canvas>
                         </div>
-                        <div>
-                            <h3 class="text-lg font-semibold text-center mb-2">天數 vs 價格 vs 停靠點</h3>
-                            <div class="chart-container mx-auto max-w-xl">
-                                <canvas id="bubble-chart"></canvas>
-                            </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-center mb-2">天數 vs 價格 vs 停靠點</h3>
+                        <div class="chart-container mx-auto max-w-xl">
+                            <canvas id="bubble-chart"></canvas>
                         </div>
                     </div>
                 </div>
-                
-                <div>
-                    <h2 id="results-title" class="text-xl font-bold mb-4 text-slate-900">所有航程</h2>
-                    <div id="results-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                    </div>
-                    <p id="no-results" class="text-center text-slate-500 py-10 hidden">找不到符合條件的航程，請嘗試調整篩選器。</p>
-                </div>
-            </main>
-        </div>
+            </div>
+
+        </main>
     </div>
 
     <div id="modal" class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 opacity-0 pointer-events-none">
@@ -160,10 +127,6 @@
         ];
 
         const state = {
-            filters: {
-                month: null,
-                duration: null,
-            },
             sortBy: 'default'
         };
 
@@ -279,83 +242,40 @@
         
         function renderCards(data) {
             const grid = document.getElementById('results-grid');
-            const noResults = document.getElementById('no-results');
             const resultsTitle = document.getElementById('results-title');
 
             grid.innerHTML = '';
-            if (data.length > 0) {
-                data.forEach(cruise => {
-                    const card = createCard(cruise);
-                    grid.insertAdjacentHTML('beforeend', card);
-                });
-                noResults.classList.add('hidden');
-                resultsTitle.textContent = `找到 ${data.length} 個符合條件的航程`;
-            } else {
-                noResults.classList.remove('hidden');
-                resultsTitle.textContent = `符合條件的航程`;
-            }
+            data.forEach(cruise => {
+                const card = createCard(cruise);
+                grid.insertAdjacentHTML('beforeend', card);
+            });
+            resultsTitle.textContent = `所有 ${data.length} 個航程`;
         }
         
-        function applyFiltersAndSort() {
-            let filteredData = [...cruiseData];
-            
-            if (state.filters.month) {
-                filteredData = filteredData.filter(c => c.month === state.filters.month);
-            }
-            if (state.filters.duration) {
-                filteredData = filteredData.filter(c => c.duration === state.filters.duration);
-            }
+        function applySortAndRender() {
+            let sortedData = [...cruiseData];
             
             switch(state.sortBy) {
                 case 'price_asc':
-                    filteredData.sort((a, b) => a.perPerson - b.perPerson);
+                    sortedData.sort((a, b) => a.perPerson - b.perPerson);
                     break;
                 case 'price_desc':
-                    filteredData.sort((a, b) => b.perPerson - a.perPerson);
+                    sortedData.sort((a, b) => b.perPerson - a.perPerson);
                     break;
                 case 'duration_asc':
-                    filteredData.sort((a, b) => a.duration - b.duration);
+                    sortedData.sort((a, b) => a.duration - b.duration);
                     break;
             }
 
-            renderCards(filteredData);
-            renderPriceChart(filteredData);
-            renderBubbleChart(filteredData);
+            renderCards(sortedData);
+            renderPriceChart(sortedData);
+            renderBubbleChart(sortedData);
         }
 
         function setupEventListeners() {
-            document.getElementById('month-filters').addEventListener('click', e => {
-                if (e.target.tagName === 'BUTTON') {
-                    const month = parseInt(e.target.dataset.month);
-                    state.filters.month = state.filters.month === month ? null : month;
-                    document.querySelectorAll('#month-filters .filter-btn').forEach(btn => btn.classList.remove('filter-btn-active'));
-                    if (state.filters.month) e.target.classList.add('filter-btn-active');
-                    applyFiltersAndSort();
-                }
-            });
-            
-            document.getElementById('duration-filters').addEventListener('click', e => {
-                if (e.target.tagName === 'BUTTON') {
-                    const duration = parseInt(e.target.dataset.duration);
-                    state.filters.duration = state.filters.duration === duration ? null : duration;
-                    document.querySelectorAll('#duration-filters .filter-btn').forEach(btn => btn.classList.remove('filter-btn-active'));
-                    if (state.filters.duration) e.target.classList.add('filter-btn-active');
-                    applyFiltersAndSort();
-                }
-            });
-
             document.getElementById('sort-by').addEventListener('change', e => {
                 state.sortBy = e.target.value;
-                applyFiltersAndSort();
-            });
-
-            document.getElementById('reset-filters').addEventListener('click', () => {
-                state.filters.month = null;
-                state.filters.duration = null;
-                state.sortBy = 'default';
-                document.getElementById('sort-by').value = 'default';
-                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('filter-btn-active'));
-                applyFiltersAndSort();
+                applySortAndRender();
             });
 
             document.getElementById('results-grid').addEventListener('click', e => {
@@ -436,7 +356,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            applyFiltersAndSort();
+            applySortAndRender();
             setupEventListeners();
         });
     </script>
