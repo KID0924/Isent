@@ -131,12 +131,72 @@
 
     <script>
         const cruiseData = [
-            { id: 1, name: 'MSC Bellissima 石垣島・那霸', date: '2025/06/24', month: 6, duration: 5, cabin: '陽台房–四人房', price: 95600, deposit: 49800, perPerson: 23900, destinations: ['石垣島', '那霸'], ship: 'MSC Bellissima', link: 'https://asiayo.com/zh-tw/activity/75576/', highlights: { original: ['親手體驗石垣島古法黑糖製作，並在川平灣享受沙灘浮潛', '探訪那霸酒造，品嚐珍貴的陳年古酒與道地琉球蕎麥麵', '海上日享受頂級SPA水療，或參加熱情的池畔甲板派對'], trend: ['數位斷捨離：海上靜心與瑜珈課程', '專屬攝影師跟拍服務，捕捉旅途完美瞬間', '沉浸式VR體驗，探索神秘的深海世界'] }, itinerary: [ 'Day 1: 基隆港啟航', 'Day 2: 石垣島停靠', 'Day 3: 那霸停靠', 'Day 4: 全天海上巡航', 'Day 5: 抵達基隆港' ], meals: [ 'Day 1: 晚餐', 'Day 2-4: 早/午/晚餐', 'Day 5: 早餐'] },
-            { id: 2, name: '麗星郵輪 Explor Star 熊本・鹿兒島・那霸', date: '2025/07/13', month: 7, duration: 6, cabin: 'BSS 露台客房–四人房', price: 133600, deposit: 66800, perPerson: 33400, destinations: ['鹿兒島', '熊本', '那霸'], ship: '麗星郵輪 Explor Star', link: 'https://asiayo.com/zh-tw/activity/51219/', highlights: { original: ['鹿兒島天然砂浴溫泉體驗，品嘗當地特色黑豬肉料理', '夜訪熊本城，欣賞壯觀的夜間光雕投影秀', '穿上華麗琉球服飾，在國際通留下美麗身影'], trend: ['深夜港口停泊：深入體驗熊本與鹿兒島的夜生活文化', '船上米其林星級主廚客座晚宴', '學習基本日語會話，與當地人輕鬆交流'] }, itinerary: [ 'Day 1: 基隆港啟航', 'Day 2: 全天海上巡航', 'Day 3: 鹿兒島停靠', 'Day 4: 熊本停靠', 'Day 5: 那霸停靠', 'Day 6: 抵達基隆港' ], meals: ['Day 1: 晚餐', 'Day 2-5: 早/午/晚餐', 'Day 6: 早餐'] },
-            { id: 3, name: '星夢郵輪 Genting Dream 新加坡・馬來西亞', date: '2025/07/19', month: 7, duration: 4, cabin: '露台客房（BSS）–四人房', price: 145600, deposit: 72800, perPerson: 36400, destinations: ['吉隆坡/馬六甲'], ship: '星夢郵輪 Genting Dream', link: 'https://asiayo.com/zh-tw/activity/52675/', highlights: { original: ['登上新加坡濱海灣金沙空中花園，俯瞰璀璨夜景', '漫步馬六甲歷史古城，品嚐道地娘惹糕點與雞飯粒', '欣賞世界級的海上水幕電影與大型魔術歌舞秀'], trend: ['永續旅遊：參與珊瑚礁復育導覽，為海洋盡一份力', '東南亞香料烹飪教室，學習製作特色佳餚', '私人管家服務，享受無微不至的尊榮體驗'] }, itinerary: [ 'Day 1: 台北✈新加坡, 登船啟航', 'Day 2: 吉隆坡/馬六甲停靠', 'Day 3: 全天海上巡航', 'Day 4: 抵達新加坡, ✈返台' ], meals: ['Day 1-4: 早/午/晚餐'] },
-            { id: 4, name: '麗星郵輪 Explor Star 公海歡樂遊', date: '2025/07/25', month: 7, duration: 3, cabin: 'DPS 皇宮套房–四人房', price: 78400, deposit: 39200, perPerson: 19600, destinations: ['公海'], ship: '麗星郵輪 Explor Star', link: 'https://asiayo.com/zh-tw/activity/54113/', highlights: { original: ['在甲板上享受日落，品嘗船長特調雞尾酒', '體驗船上豪華水療中心，享受桑拿與按摩療程', '參加船上主題派對，如白色之夜或復古迪斯可'], trend: ['海上觀星工作坊，由天文專家指導認識星座', '無人機攝影教學，從空中捕捉郵輪的壯闊美景', '海上德州撲克錦標賽，挑戰各路好手'] }, itinerary: [ 'Day 1: 基隆港啟航', 'Day 2: 全天海上巡航', 'Day 3: 抵達基隆港' ], meals: ['Day 1: 晚餐', 'Day 2: 早/午/晚餐', 'Day 3: 早餐'] },
-            { id: 5, name: 'MSC Bellissima 宮古島・沖繩・石垣島', date: '2025/11/21', month: 11, duration: 5, cabin: '陽台艙–四人房', price: 77600, deposit: 43800, perPerson: 19400, destinations: ['宮古島', '那霸', '石垣島'], ship: 'MSC Bellissima', link: 'https://asiayo.com/zh-tw/activity/45842/', highlights: { original: ['搭乘玻璃底船探索川平灣，欣賞繽紛的珊瑚礁生態', '參加琉球傳統舞蹈工作坊，學習優雅的Eisa舞步', '國際通自由購物，尋找獨特的伴手禮與特色美食'], trend: ['Coolcation主題：探訪宮古島秘境沙灘與海蝕洞', '船上舉辦環保講座，了解海洋保育的重要性', '品嚐沖繩獨有的海葡萄與AGU豬肉料理'] }, itinerary: [ 'Day 1: 基隆港啟航', 'Day 2: 宮古島停靠', 'Day 3: 那霸停靠', 'Day 4: 石垣島停靠', 'Day 5: 抵達基隆港' ], meals: ['Day 1: 晚餐', 'Day 2-4: 早/午/晚餐', 'Day 5: 早餐'] },
-            { id: 6, name: '歌詩達郵輪 莎倫娜號～沖繩', date: '2025/07/20', month: 7, duration: 4, cabin: '陽台艙–二人房×2', price: 111600, deposit: 60000, perPerson: 27900, destinations: ['那霸'], ship: '歌詩達郵輪 莎倫娜號', link: 'https://asiayo.com/zh-tw/activity/54976', highlights: { original: ['親手製作沖繩紫薯塔 (Beniimo Tart)，品嚐在地的甜蜜滋味', '參觀重建後的首里城，感受琉球王國的歷史風華', '在郵輪甲板上體驗星空瑜伽，感受海風與星光的洗禮'], trend: ['沉浸式VR體驗：穿越時空重返琉球王朝盛世', '船上直播廚藝秀，與主廚互動學習義大利料理', '那霸港口過夜，深入探索國際通的夜間魅力'] }, itinerary: [ 'Day 1: 基隆港報到啟航', 'Day 2: 抵達那霸・停泊過夜', 'Day 3: 啟航離開那霸', 'Day 4: 抵達基隆港' ], meals: ['Day 1: 午/晚餐', 'Day 2-3: 早/午/晚餐', 'Day 4: 早餐'] }
+            { id: 1, name: 'MSC Bellissima 石垣島・那霸', date: '2025/06/24', month: 6, duration: 5, cabin: '陽台房–四人房', price: 95600, deposit: 49800, perPerson: 23900, destinations: ['石垣島', '那霸'], ship: 'MSC Bellissima', link: 'https://asiayo.com/zh-tw/activity/75576/', 
+                highlights: { 
+                    original: [
+                        { text: '親手體驗石垣島古法黑糖製作，並在川平灣享受沙灘浮潛', query: '石垣島 黑糖製作體驗 川平灣 浮潛' },
+                        { text: '探訪那霸酒造，品嚐珍貴的陳年古酒與道地琉球蕎麥麵', query: '那霸 酒造參觀 古酒 琉球蕎麥麵' },
+                        { text: '海上日享受頂級SPA水療，或參加熱情的池畔甲板派對', query: '郵輪 SPA水療 甲板派對' }
+                    ], 
+                    trend: ['數位斷捨離：海上靜心與瑜珈課程', '專屬攝影師跟拍服務，捕捉旅途完美瞬間', '沉浸式VR體驗，探索神秘的深海世界'] 
+                }, 
+                itinerary: [ 'Day 1: 基隆港啟航', 'Day 2: 石垣島停靠', 'Day 3: 那霸停靠', 'Day 4: 全天海上巡航', 'Day 5: 抵達基隆港' ], meals: [ 'Day 1: 晚餐', 'Day 2-4: 早/午/晚餐', 'Day 5: 早餐'] 
+            },
+            { id: 2, name: '麗星郵輪 Explor Star 熊本・鹿兒島・那霸', date: '2025/07/13', month: 7, duration: 6, cabin: 'BSS 露台客房–四人房', price: 133600, deposit: 66800, perPerson: 33400, destinations: ['鹿兒島', '熊本', '那霸'], ship: '麗星郵輪 Explor Star', link: 'https://asiayo.com/zh-tw/activity/51219/', 
+                highlights: { 
+                    original: [
+                        { text: '鹿兒島天然砂浴溫泉體驗，品嘗當地特色黑豬肉料理', query: '鹿兒島 砂浴溫泉 黑豬肉料理' },
+                        { text: '夜訪熊本城，欣賞壯觀的夜間光雕投影秀', query: '熊本城 夜間點燈 光雕秀' },
+                        { text: '穿上華麗琉球服飾，在國際通留下美麗身影', query: '那霸 國際通 琉球服飾體驗' }
+                    ], 
+                    trend: ['深夜港口停泊：深入體驗熊本與鹿兒島的夜生活文化', '船上米其林星級主廚客座晚宴', '學習基本日語會話，與當地人輕鬆交流'] 
+                }, 
+                itinerary: [ 'Day 1: 基隆港啟航', 'Day 2: 全天海上巡航', 'Day 3: 鹿兒島停靠', 'Day 4: 熊本停靠', 'Day 5: 那霸停靠', 'Day 6: 抵達基隆港' ], meals: ['Day 1: 晚餐', 'Day 2-5: 早/午/晚餐', 'Day 6: 早餐'] 
+            },
+            { id: 3, name: '星夢郵輪 Genting Dream 新加坡・馬來西亞', date: '2025/07/19', month: 7, duration: 4, cabin: '露台客房（BSS）–四人房', price: 145600, deposit: 72800, perPerson: 36400, destinations: ['吉隆坡/馬六甲'], ship: '星夢郵輪 Genting Dream', link: 'https://asiayo.com/zh-tw/activity/52675/', 
+                highlights: { 
+                    original: [
+                        { text: '登上新加坡濱海灣金沙空中花園，俯瞰璀璨夜景', query: '新加坡 濱海灣金沙 空中花園 夜景' },
+                        { text: '漫步馬六甲歷史古城，品嚐道地娘惹糕點與雞飯粒', query: '馬六甲古城 娘惹糕 雞飯粒' },
+                        { text: '欣賞世界級的海上水幕電影與大型魔術歌舞秀', query: '郵輪 水幕電影 魔術秀' }
+                    ], 
+                    trend: ['永續旅遊：參與珊瑚礁復育導覽，為海洋盡一份力', '東南亞香料烹飪教室，學習製作特色佳餚', '私人管家服務，享受無微不至的尊榮體驗'] 
+                }, 
+                itinerary: [ 'Day 1: 台北✈新加坡, 登船啟航', 'Day 2: 吉隆坡/馬六甲停靠', 'Day 3: 全天海上巡航', 'Day 4: 抵達新加坡, ✈返台' ], meals: ['Day 1-4: 早/午/晚餐'] 
+            },
+            { id: 4, name: '麗星郵輪 Explor Star 公海歡樂遊', date: '2025/07/25', month: 7, duration: 3, cabin: 'DPS 皇宮套房–四人房', price: 78400, deposit: 39200, perPerson: 19600, destinations: ['公海'], ship: '麗星郵輪 Explor Star', link: 'https://asiayo.com/zh-tw/activity/54113/', 
+                highlights: { 
+                    original: [
+                        { text: '在甲板上享受日落，品嘗船長特調雞尾酒', query: '郵輪 日落雞尾酒派對' },
+                        { text: '體驗船上豪華水療中心，享受桑拿與按摩療程', query: '郵輪 SPA 水療中心 桑拿 按摩' },
+                        { text: '參加船上主題派對，如白色之夜或復古迪斯可', query: '郵輪 白色派對 復古迪斯可派對' }
+                    ], 
+                    trend: ['海上觀星工作坊，由天文專家指導認識星座', '無人機攝影教學，從空中捕捉郵輪的壯闊美景', '海上德州撲克錦標賽，挑戰各路好手'] 
+                }, 
+                itinerary: [ 'Day 1: 基隆港啟航', 'Day 2: 全天海上巡航', 'Day 3: 抵達基隆港' ], meals: ['Day 1: 晚餐', 'Day 2: 早/午/晚餐', 'Day 3: 早餐'] 
+            },
+            { id: 5, name: 'MSC Bellissima 宮古島・沖繩・石垣島', date: '2025/11/21', month: 11, duration: 5, cabin: '陽台艙–四人房', price: 77600, deposit: 43800, perPerson: 19400, destinations: ['宮古島', '那霸', '石垣島'], ship: 'MSC Bellissima', link: 'https://asiayo.com/zh-tw/activity/45842/', 
+                highlights: { 
+                    original: [
+                        { text: '搭乘玻璃底船探索川平灣，欣賞繽紛的珊瑚礁生態', query: '石垣島 川平灣 玻璃底船 珊瑚礁' },
+                        { text: '參加琉球傳統舞蹈工作坊，學習優雅的Eisa舞步', query: '沖繩 琉球村 Eisa太鼓舞體驗' },
+                        { text: '國際通自由購物，尋找獨特的伴手禮與特色美食', query: '沖繩 那霸 國際通 購物 伴手禮 美食' }
+                    ], 
+                    trend: ['Coolcation主題：探訪宮古島秘境沙灘與海蝕洞', '船上舉辦環保講座，了解海洋保育的重要性', '品嚐沖繩獨有的海葡萄與AGU豬肉料理'] 
+                }, 
+                itinerary: [ 'Day 1: 基隆港啟航', 'Day 2: 宮古島停靠', 'Day 3: 那霸停靠', 'Day 4: 石垣島停靠', 'Day 5: 抵達基隆港' ], meals: ['Day 1: 晚餐', 'Day 2-4: 早/午/晚餐', 'Day 5: 早餐'] 
+            },
+            { id: 6, name: '歌詩達郵輪 莎倫娜號～沖繩', date: '2025/07/20', month: 7, duration: 4, cabin: '陽台艙–二人房×2', price: 111600, deposit: 60000, perPerson: 27900, destinations: ['那霸'], ship: '歌詩達郵輪 莎倫娜號', link: 'https://asiayo.com/zh-tw/activity/54976', 
+                highlights: { 
+                    original: [
+                        { text: '親手製作沖繩紫薯塔 (Beniimo Tart)，品嚐在地的甜蜜滋味', query: '沖繩 紫薯塔 DIY 體驗' },
+                        { text: '參觀重建後的首里城，感受琉球王國的歷史風華', query: '沖繩 首里城公園 參觀' },
+                        { text: '在郵輪甲板上體驗星空瑜伽，感受海風與星光的洗禮', query: '郵輪 甲板 星空瑜伽' }
+                    ], 
+                    trend: ['沉浸式VR體驗：穿越時空重返琉球王朝盛世', '船上直播廚藝秀，與主廚互動學習義大利料理', '那霸港口過夜，深入探索國際通的夜間魅力'] 
+                }, 
+                itinerary: [ 'Day 1: 基隆港報到啟航', 'Day 2: 抵達那霸・停泊過夜', 'Day 3: 啟航離開那霸', 'Day 4: 抵達基隆港' ], meals: ['Day 1: 午/晚餐', 'Day 2-3: 早/午/晚餐', 'Day 4: 早餐'] 
+            }
         ];
 
         // Pre-process data to add departure port
@@ -343,8 +403,8 @@
             const createClickableHighlightList = (highlights) => {
                 return highlights.map(item => `
                     <li>
-                        <a href="https://www.google.com/search?q=${encodeURIComponent(item)}" target="_blank" rel="noopener noreferrer" class="highlight-link">
-                           ${item}
+                        <a href="https://www.google.com/search?q=${encodeURIComponent(item.query)}" target="_blank" rel="noopener noreferrer" class="highlight-link">
+                           ${item.text}
                         </a>
                     </li>`).join('');
             };
